@@ -5,97 +5,59 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>📚 微信读书每日学习笔记</title>
 <style>
-  :root {
-    --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --text2: #64748b;
-    --accent: #2563eb; --accent2: #7c3aed; --border: #e2e8f0;
-    --green: #059669; --orange: #d97706;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, "PingFang SC", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
-  .header { background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); color: white; padding: 48px 24px 36px; text-align: center; }
-  .header h1 { font-size: 1.8em; margin-bottom: 8px; }
-  .header p { opacity: 0.9; font-size: 0.95em; max-width: 480px; margin: 0 auto; }
-  .container { max-width: 720px; margin: -24px auto 0; padding: 0 16px 48px; position: relative; z-index: 1; }
-  .card { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--border); }
-  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-  .card-date { font-size: 0.82em; color: var(--text2); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-  .card-date::before { content: "📅"; }
-  .card h2 { font-size: 1.25em; color: var(--accent); margin-bottom: 8px; }
-  .card-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-  .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78em; font-weight: 500; }
-  .tag-cat { background: #eff6ff; color: #1d4ed8; }
-  .tag-status { background: #f0fdf4; color: #15803d; }
-  .tag-new { background: #fef3c7; color: #b45309; }
-  .card-summary { color: var(--text2); font-size: 0.92em; line-height: 1.7; margin-bottom: 14px; }
-  .card-link { display: inline-block; color: var(--accent); font-size: 0.9em; font-weight: 500; text-decoration: none; padding: 8px 18px; background: #eff6ff; border-radius: 6px; transition: background 0.2s; }
-  .card-link:hover { background: #dbeafe; text-decoration: none; }
-  .empty-state { text-align: center; padding: 60px 24px; color: var(--text2); }
-  .empty-state .emoji { font-size: 3em; margin-bottom: 16px; }
-  .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
-  .stat-card { background: white; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border); }
-  .stat-num { font-size: 1.8em; font-weight: 700; color: var(--accent); }
-  .stat-label { font-size: 0.82em; color: var(--text2); margin-top: 2px; }
-  .footer { text-align: center; color: var(--text2); font-size: 0.85em; padding: 24px 0; border-top: 1px solid var(--border); margin-top: 32px; }
-  @media (max-width: 600px) {
-    .header { padding: 36px 16px 28px; }
-    .header h1 { font-size: 1.5em; }
-    .container { padding: 0 12px 36px; }
-    .card { padding: 18px; }
-    .stats-bar { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .stat-card { padding: 14px 10px; }
-    .stat-num { font-size: 1.4em; }
-  }
+  :root { --bg: #f8fafc; --card: #fff; --text: #1e293b; --accent: #2563eb; --sub: #64748b; --border: #e2e8f0; --radius: 12px; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+  .header { background: linear-gradient(135deg, #1e3a5f, #2563eb); color: white; padding: 40px 20px 36px; text-align: center; }
+  .header-icon { font-size: 48px; display:block; margin-bottom: 8px; }
+  .header h1 { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+  .header p { opacity: .85; margin-top: 8px; font-size: 14.5px; }
+  .container { max-width: 720px; margin: 0 auto; padding: 20px 16px 60px; }
+  .note-card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04); text-decoration: none; color: inherit; display: block; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; }
+  .note-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(37,99,235,.1); }
+  .note-card::before { content:''; position:absolute; top:0; left:0; right:0; height: 4px; background: linear-gradient(90deg, #2563eb, #7c3aed); }
+  .note-date { font-size: 13px; color: var(--sub); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .note-title { font-size: 19px; font-weight: 800; margin: 6px 0 4px; }
+  .note-meta { font-size: 13.5px; color: var(--sub); }
+  .note-tag { display:inline-block; background:#eff6ff; color:#2563eb; padding:2px 10px; border-radius:12px; font-size:12px; margin-right:4px; }
+  .footer { text-align:center; padding: 32px; color: var(--sub); font-size: 13px; }
+  .stats { display:flex; justify-content:center; gap:24px; margin-top:16px; flex-wrap:wrap; }
+  .stat { text-align:center; }
+  .stat-num { font-size:28px; font-weight:800; color:white; }
+  .stat-label { font-size:12px; opacity:.75; }
 </style>
 </head>
 <body>
-
 <div class="header">
-  <h1>📚 微信读书 · 每日学习笔记</h1>
-  <p>每天一本非虚构好书，用清华学霸的方法论拆解核心思想</p>
+  <span class="header-icon">📚</span>
+  <h1>微信读书 · 每日学习笔记</h1>
+  <p>用金字塔原理拆解每一本好书 · AI 驱动</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">1</div><div class="stat-label">篇笔记</div></div>
+    <div class="stat"><div class="stat-num">123</div><div class="stat-label">本书架</div></div>
+    <div class="stat"><div class="stat-num">∞</div><div class="stat-label">天坚持</div></div>
+  </div>
 </div>
 
 <div class="container">
 
-<div class="stats-bar">
-  <div class="stat-card">
-    <div class="stat-num">1</div>
-    <div class="stat-label">已生成笔记</div>
+<a class="note-card" href="2026-07-28-%E4%BB%8E%E4%BC%98%E7%A7%80%E5%88%B0%E5%8D%93%E8%B6%8A.html">
+  <div class="note-date">2026-07-28 · 第 1 天</div>
+  <div class="note-title">《从优秀到卓越》</div>
+  <div class="note-meta">
+    吉姆·柯林斯
+    <span class="note-tag">管理</span>
+    <span class="note-tag">⭐ 8.02分</span>
   </div>
-  <div class="stat-card">
-    <div class="stat-num">123</div>
-    <div class="stat-label">书架待读</div>
-  </div>
-  <div class="stat-card">
-    <div class="stat-num" style="color: var(--orange);">12:00</div>
-    <div class="stat-label">每日推送</div>
-  </div>
-</div>
-
-<!-- Note Card -->
-<a href="2026-07-28-从优秀到卓越.html" style="text-decoration:none;color:inherit;">
-<div class="card">
-  <div class="card-date">2026年7月28日 · 第 1 天</div>
-  <h2>《从优秀到卓越》— 吉姆·柯林斯</h2>
-  <div class="card-meta">
-    <span class="tag tag-cat">经济理财-管理</span>
-    <span class="tag tag-status">在读</span>
-    <span class="tag tag-new">⭐ 最新</span>
-  </div>
-  <div class="card-summary">
-    卓越不是一个目的地，而是一个 disciplined people → disciplined thought → disciplined action 的持续飞轮。本书通过11家跨越型公司的实证研究，揭示了从优秀到卓越的六大核心框架：第5级领导人、先人后事、直面残酷现实、刺猬理念、训练有素的文化、飞轮效应。
-  </div>
-  <span class="card-link">阅读完整笔记 →</span>
-</div>
 </a>
 
-<!-- Future notes will appear here -->
+<!-- 新笔记会自动添加到这里 -->
+
+</div>
 
 <div class="footer">
-  <p>由 WorkBuddy 自动化任务每天中午12:00生成</p>
-  <p style="margin-top: 4px;">数据来源：微信读书 API + 热门划线 + 个人笔记</p>
+  <p>由 WorkBuddy AI 自动生成 · 每日中午12:00更新</p>
+  <p style="margin-top:4px;">数据来源：微信读书书架 + 热门划线 + 个人笔记</p>
 </div>
-
-</div>
-
 </body>
 </html>
