@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 微信读书每日学习笔记</title>
+<style>
+  :root {
+    --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --text2: #64748b;
+    --accent: #2563eb; --accent2: #7c3aed; --border: #e2e8f0;
+    --green: #059669; --orange: #d97706;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Noto Sans SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+  .header { background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); color: white; padding: 48px 24px 36px; text-align: center; }
+  .header h1 { font-size: 1.8em; margin-bottom: 8px; }
+  .header p { opacity: 0.9; font-size: 0.95em; max-width: 480px; margin: 0 auto; }
+  .container { max-width: 720px; margin: -24px auto 0; padding: 0 16px 48px; position: relative; z-index: 1; }
+  .card { background: var(--card); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; border: 1px solid var(--border); }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+  .card-date { font-size: 0.82em; color: var(--text2); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .card-date::before { content: "📅"; }
+  .card h2 { font-size: 1.25em; color: var(--accent); margin-bottom: 8px; }
+  .card-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78em; font-weight: 500; }
+  .tag-cat { background: #eff6ff; color: #1d4ed8; }
+  .tag-status { background: #f0fdf4; color: #15803d; }
+  .tag-new { background: #fef3c7; color: #b45309; }
+  .card-summary { color: var(--text2); font-size: 0.92em; line-height: 1.7; margin-bottom: 14px; }
+  .card-link { display: inline-block; color: var(--accent); font-size: 0.9em; font-weight: 500; text-decoration: none; padding: 8px 18px; background: #eff6ff; border-radius: 6px; transition: background 0.2s; }
+  .card-link:hover { background: #dbeafe; text-decoration: none; }
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--text2); }
+  .empty-state .emoji { font-size: 3em; margin-bottom: 16px; }
+  .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat-card { background: white; border-radius: 10px; padding: 18px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid var(--border); }
+  .stat-num { font-size: 1.8em; font-weight: 700; color: var(--accent); }
+  .stat-label { font-size: 0.82em; color: var(--text2); margin-top: 2px; }
+  .footer { text-align: center; color: var(--text2); font-size: 0.85em; padding: 24px 0; border-top: 1px solid var(--border); margin-top: 32px; }
+  @media (max-width: 600px) {
+    .header { padding: 36px 16px 28px; }
+    .header h1 { font-size: 1.5em; }
+    .container { padding: 0 12px 36px; }
+    .card { padding: 18px; }
+    .stats-bar { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-card { padding: 14px 10px; }
+    .stat-num { font-size: 1.4em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>📚 微信读书 · 每日学习笔记</h1>
+  <p>每天一本非虚构好书，用清华学霸的方法论拆解核心思想</p>
+</div>
+
+<div class="container">
+
+<div class="stats-bar">
+  <div class="stat-card">
+    <div class="stat-num">1</div>
+    <div class="stat-label">已生成笔记</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">123</div>
+    <div class="stat-label">书架待读</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" style="color: var(--orange);">12:00</div>
+    <div class="stat-label">每日推送</div>
+  </div>
+</div>
+
+<!-- Note Card -->
+<a href="2026-07-28-从优秀到卓越.html" style="text-decoration:none;color:inherit;">
+<div class="card">
+  <div class="card-date">2026年7月28日 · 第 1 天</div>
+  <h2>《从优秀到卓越》— 吉姆·柯林斯</h2>
+  <div class="card-meta">
+    <span class="tag tag-cat">经济理财-管理</span>
+    <span class="tag tag-status">在读</span>
+    <span class="tag tag-new">⭐ 最新</span>
+  </div>
+  <div class="card-summary">
+    卓越不是一个目的地，而是一个 disciplined people → disciplined thought → disciplined action 的持续飞轮。本书通过11家跨越型公司的实证研究，揭示了从优秀到卓越的六大核心框架：第5级领导人、先人后事、直面残酷现实、刺猬理念、训练有素的文化、飞轮效应。
+  </div>
+  <span class="card-link">阅读完整笔记 →</span>
+</div>
+</a>
+
+<!-- Future notes will appear here -->
+
+<div class="footer">
+  <p>由 WorkBuddy 自动化任务每天中午12:00生成</p>
+  <p style="margin-top: 4px;">数据来源：微信读书 API + 热门划线 + 个人笔记</p>
+</div>
+
+</div>
+
+</body>
+</html>
