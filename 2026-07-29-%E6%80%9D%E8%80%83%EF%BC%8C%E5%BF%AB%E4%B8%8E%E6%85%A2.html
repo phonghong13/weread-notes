@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📖 思考，快与慢 - 深度学习笔记</title>
+<style>
+  :root {
+    --bg: #fafafa; --card: #ffffff; --text: #1a1a2e;
+    --accent: #2563eb; --accent-light: #eff6ff; --border: #e5e7eb;
+    --sub: #6b7280; --green: #059669; --red: #dc2626; --orange: #d97706;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.04);
+    --radius: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif; background: var(--bg); color: var(--text); line-height: 1.8; font-size: 15.5px; -webkit-font-smoothing: antialiased; }
+
+  .header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); color: white; padding: 36px 20px 32px; text-align: center; position: relative; overflow: hidden; }
+  .header::before { content:''; position:absolute; top:-50%; right:-30%; width:300px; height:300px; background:rgba(255,255,255,.06); border-radius:50%; }
+  .header::after { content:''; position:absolute; bottom:-40%; left:-10%; width:200px; height:200px; background:rgba(255,255,255,.04); border-radius:50%; }
+  .header-icon { font-size: 42px; margin-bottom: 10px; display:block; }
+  .header h1 { font-size: 24px; font-weight: 800; letter-spacing: -.5px; line-height: 1.3; position:relative; z-index:1; }
+  .header-meta { font-size: 13px; opacity: .85; margin-top: 10px; position:relative; z-index:1; line-height: 1.9; }
+  .header-tag { display:inline-block; background: rgba(255,255,255,.18); padding: 3px 10px; border-radius: 20px; font-size: 12px; margin: 2px 3px; backdrop-filter: blur(4px); }
+
+  .container { max-width: 720px; margin: 0 auto; padding: 16px 16px 60px; }
+  .one-liner { background: linear-gradient(135deg, #fef3c7, #fde68a); border-left: 4px solid #f59e0b; padding: 18px 20px; border-radius: 0 var(--radius) var(--radius) 0; margin: -20px 0 24px; box-shadow: var(--shadow); position:relative; z-index:2; font-weight: 600; font-size: 15.5px; color: #78350f; }
+
+  .section { background: var(--card); border-radius: var(--radius); padding: 28px 24px; margin-bottom: 20px; box-shadow: var(--shadow); }
+  .section-title { font-size: 19px; font-weight: 800; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; color: var(--text); }
+  .section-title .emoji { font-size: 22px; flex-shrink: 0; }
+  h3 { font-size: 16.5px; font-weight: 700; margin: 22px 0 10px; color: var(--text); }
+  p { margin-bottom: 14px; color: #374151; }
+  strong { color: var(--text); font-weight: 700; }
+
+  blockquote { background: var(--accent-light); border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 16px 0; font-style: normal; color: #1e40af; }
+  blockquote p { color: #1e40af; margin: 0; }
+
+  .analogy-box { background: linear-gradient(135deg, #ecfdf5, #d1fae5); border-left: 4px solid var(--green); padding: 16px 18px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+  .analogy-box strong { color: var(--green); }
+
+  .tree-box { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; overflow-x: auto; font-family: "SF Mono", Menlo, monospace; font-size: 13px; line-height: 1.7; white-space: pre; color: #334155; }
+
+  .concept-card { background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; transition: transform .2s; }
+  .concept-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+  .concept-name { font-size: 17px; font-weight: 800; color: var(--accent); margin-bottom: 12px; }
+  .concept-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .concept-table td { padding: 8px 6px; vertical-align: top; border-bottom: 1px solid #f1f5f9; }
+  .concept-table tr:last-child td { border-bottom: none; }
+  .concept-table td:first-child { font-weight: 600; color: var(--sub); white-space: nowrap; width: 90px; }
+
+  .insight-card { background: linear-gradient(135deg, #fff, #f0f9ff); border: 1px solid #bae6fd; border-radius: 10px; padding: 20px; margin: 16px 0; }
+  .insight-num { display:inline-block; background: var(--accent); color:white; width:26px; height:26px; border-radius:50%; text-align:center; line-height:26px; font-size:13px; font-weight:700; margin-right:8px; vertical-align:middle; }
+  .insight-title { font-size: 17px; font-weight: 800; margin-bottom: 12px; }
+  .insight-item { margin: 10px 0; padding-left: 16px; position: relative; }
+  .insight-item::before { content:'▸'; position:absolute; left:0; color: var(--accent); font-weight:bold; }
+  .insight-label { font-weight: 700; color: var(--text); }
+
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 10px 0 10px 36px; position: relative; border-bottom: 1px solid #f1f5f9; }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li::before { content:'☐'; position:absolute; left:4px; top:10px; font-size: 18px; color: var(--border); }
+  .checklist li strong { color: var(--accent); }
+
+  .critique-ok { border-left: 3px solid var(--green); padding-left: 14px; margin: 12px 0; }
+  .critique-doubt { border-left: 3px solid var(--orange); padding-left: 14px; margin: 12px 0; }
+  .critique-blind { border-left: 3px solid var(--red); padding-left: 14px; margin: 12px 0; }
+
+  .book-table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 14px 0; }
+  .book-table th { background: #f1f5f9; padding: 10px 12px; text-align: left; font-weight: 700; font-size: 13px; color: var(--sub); text-transform: uppercase; letter-spacing: .5px; }
+  .book-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+
+  .footer { text-align: center; padding: 24px; color: var(--sub); font-size: 13px; border-top: 1px solid var(--border); margin-top: 20px; }
+
+  .toc { position: sticky; top: 0; background: white; z-index: 100; border-bottom: 1px solid var(--border); padding: 10px 16px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc a { display: inline-block; padding: 6px 14px; border-radius: 20px; background: #f1f5f9; color: var(--sub); text-decoration: none; font-size: 13px; font-weight: 500; white-space: nowrap; margin-right: 6px; transition: all .2s; }
+  .toc a:hover, .toc a.active { background: var(--accent); color: white; }
+
+  .warning-badge { display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; color: #991b1b; padding: 8px 14px; border-radius: 8px; font-size: 13px; margin: 14px 0; }
+  .warning-badge .icon { font-size: 16px; }
+
+  @media (max-width: 480px) {
+    body { font-size: 14.5px; }
+    .header { padding: 28px 16px 24px; }
+    .header h1 { font-size: 21px; }
+    .section { padding: 22px 18px; }
+    .concept-table td:first-child { width: 75px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-icon">📖</span>
+  <h1>《思考，快与慢》<br>深度学习笔记</h1>
+  <div class="header-meta">
+    <span>丹尼尔·卡尼曼</span> ·
+    <span>个人成长 / 认知思维 / 心理学</span><br>
+    <span class="header-tag">📊 微信读书评分 9.02</span>
+    <span class="header-tag">⏰ 第 2 天</span>
+    <span class="header-tag">📅 2026-07-29</span>
+  </div>
+</div>
+
+<nav class="toc" id="toc">
+  <a href="#problem">问题空间</a>
+  <a href="#framework">核心架构</a>
+  <a href="#concepts">关键概念</a>
+  <a href="#knowledge">知识图谱</a>
+  <a href="#insights">核心洞察</a>
+  <a href="#critical">批判思考</a>
+  <a href="#action">行动清单</a>
+</nav>
+
+<div class="container">
+
+<div class="one-liner">
+  💡 一句话总结：<strong>你的大脑有两套操作系统——系统1凭直觉快速反应，系统2靠理性慢速分析；大部分决策错误都源于系统1的「偷懒」和系统2的「缺位」。</strong>
+</div>
+
+<div class="warning-badge">
+  <span class="icon">⚠️</span>
+  本书暂无热门划线和个人笔记数据，以下内容基于书籍原文结构、核心研究方法及公开读者反馈整理。
+</div>
+
+<!-- ===== Problem Space ===== -->
+<section class="section" id="problem">
+  <h2 class="section-title"><span class="emoji">🔍</span> 这本书在解决什么问题？</h2>
+
+  <h3>现象与痛点</h3>
+  <p><strong>我们自以为理性的决策，其实充满了系统性偏差。</strong></p>
+
+  <p>你有没有过这些经历：</p>
+  <ul style="padding-left: 20px; margin-bottom: 14px;">
+    <li>明明知道某只股票风险高，但因为「感觉会涨」还是买了？</li>
+    <li>第一眼对某人形成印象后，之后所有信息都在验证这个印象？</li>
+    <li>因为一个产品标价从20元涨到25元就觉得贵，却对100元到105元的涨幅无感？</li>
+    <li>在熟悉领域是专家，换一个场景就犯低级错误？</li>
+  </ul>
+
+  <p>这些不是「不够聪明」的问题——<strong>这是人类大脑硬件层面的设计缺陷</strong>。卡尼曼用50年的研究告诉你：你的大脑在设计上就不是为了做理性决策的，它首先是为了让你<strong>活下去</strong>。</p>
+
+  <blockquote>
+    <p>经济学假设人是「理性人」（Homo Economicus），但卡尼曼证明：人在大多数时候是「直觉人」，只有在极少数情况下才能调动真正的理性。这个发现颠覆了整个现代经济学的基石。</p>
+  </blockquote>
+
+  <h3>核心假设</h3>
+  <p>卡尼曼的基本假设：<strong>人类思维存在两套截然不同的运作模式（系统1和系统2），理解这两套系统的协作（和冲突）机制，就能解释几乎所有常见的认知偏差和决策失误。</strong></p>
+
+  <p>他和阿莫斯·特沃斯基（Amos Tversky）合作数十年，通过大量精巧的行为实验，识别出一系列可重复、可预测的认知偏差模式。这些发现最终为他赢得了2002年诺贝尔经济学奖。</p>
+
+  <div class="analogy-box">
+    <p><strong>💡 类比：</strong>把大脑想象成一台电脑——<strong>系统1是GPU（显卡）</strong>，擅长并行处理图像、模式识别、快速响应，几乎不耗能但容易出错；<strong>系统2是CPU</strong>，擅长逻辑推理、精确计算、多步规划，能力强但极其耗电且带宽有限。问题是：CPU太懒了，90%的时间都让GPU代劳。</p>
+  </div>
+</section>
+
+<!-- ===== Framework ===== -->
+<section class="section" id="framework">
+  <h2 class="section-title"><span class="emoji">🧱</span> 核心思想架构</h2>
+
+  <h3>第一性原理（The First Principle）</h3>
+  <blockquote>
+    <p><strong>人类的「理性」是一种稀缺资源，需要主动调用且极易耗尽。默认状态下，大脑依赖快速、自动、情绪化的直觉系统（系统1）运行；只有当系统1遇到困难或被刻意激活时，慢速、费力、逻辑化的系统2才会介入。</strong></p>
+  </blockquote>
+
+  <p>所有认知偏差都可以追溯到这个基本事实：**系统1想省力，系统2想偷懒**。两者的博弈塑造了你所有的判断和选择。</p>
+
+  <h3>核心论点树</h3>
+  <div class="tree-box">                    ┌─ 论点1.1：系统1的特征 —— 快速、自动、无意识、情绪化
+                    │   └─ 案例：看到怒脸→立刻感到不适（无法关闭）
+          ┌─ 论点1：双系统理论 ─┤
+          │  （全书基石）        └─ 论点1.2：系统2的特征 —— 慢速、费力、有意识、逻辑化
+          │                     └─ 案例：计算17×24（必须集中注意力）
+          │
+          │         ┌─ 论点2.1：锚定效应 —— 第一印象像锚一样拖住后续判断
+          ├─ 论点2：启发式偏差 ─┤   案例：房产中介报价受随意数字影响
+          │  （系统1走捷径）     ├─ 论点2.2：可得性偏差 —— 越容易想到的事越被高估
+          │                     │   案例：飞机失事比糖尿病致死更「可怕」
+          │                     ├─ 论点2.3：代表性偏差 —— 用相似性替代概率
+          │                     │   案例：「琳达是个女权活动家」比「琳达是银行出纳员
+          │                     │           且是女权活动家」概率更低？大多数人选错
+          │                     └─ 论点2.4：因果性错觉 —— 大脑天生喜欢故事而非统计
+          │
+          │         ┌─ 论点3.1：前景理论 —— 人们对损失的感受是收益的约2倍
+          ├─ 论点3：前景理论与损失厌恶 ─┤  「损失100元的痛苦 > 获得100元的快乐」
+          │                             └─ 论点3.2：参照点依赖 —— 同样的结果，
+          │                                 不同参照点下感受完全不同
+          │                                 （赚500 vs 少亏500 → 心理效果天差地别）
+          │
+          │         ┌─ 论点4.1：禀赋效应 —— 自己拥有的东西估值更高
+          ├─ 论点4：框架效应与心理账户 ─┤  案例：咖啡杯实验（拿到杯子的人
+          │                             │   不愿以低于两倍价格卖出）
+          │                             └─ 论点4.2：心理账户 —— 钱在脑子里分门别类，
+          │                                 同样100元在不同「账户」中价值不同
+          │
+          │         ┌─ 论点5.1：过度自信 —— 人普遍高估自己的能力和预测准确性
+          ├─ 论点5：过度自信与直觉的陷阱 ─┤  「90%的司机认为自己驾驶技术高于平均」
+          │                               └─ 论点5.2：专家直觉的局限 ——
+          │                                   只有在高规律+高反馈环境下
+          │                                   专家直觉才可靠（如棋手、放射科医生）
+          │
+          └─ 论点6：两个自我的抉择 ──────┼─ 论点6.1：体验自我（活在当下，感受强度决定记忆）
+                                        └─ 论点6.2：记忆自我（事后回忆，峰值-终值法则主导）
+                                            └─ 案例：结肠镜检查实验 —— 延长无痛时间
+                                                反而让患者记忆更痛苦</div>
+</section>
+
+<!-- ===== Key Concepts ===== -->
+<section class="section" id="concepts">
+  <h2 class="section-title"><span class="emoji">📚</span> 关键概念精解</h2>
+
+  <!-- 概念1 -->
+  <div class="concept-card">
+    <div class="concept-name">① 系统1 与 系统2（System 1 & System 2）</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>系统1：快速、自动、无意识、低能耗的思维模式，持续后台运行。系统2：缓慢、费力、有意识、高能耗的思维模式，需要主动调用</td></tr>
+      <tr><td>人话翻译</td><td><strong>系统1是你的「自动驾驶」</strong>——看到红灯踩刹车、听到笑话笑出来、一眼认出朋友的脸。<strong>系统2是你的「手动挡」</strong>——算账、学新技能、做复杂决策、克制冲动</td></tr>
+      <tr><td>为什么重要</td><td>全书的基石概念。不理解双系统就无法理解任何其他偏差。所有认知错误的根源都是：该用系统2的时候用了系统1</td></tr>
+      <tr><td>生活实例</td><td>做数学题17×24时你会突然停下来、瞳孔放大、心跳加速——这就是系统2被激活的生理信号。而回答「2+2=?」时你完全不费力气——那是系统1</td></tr>
+      <tr><td>关联概念</td><td>认知放松、认知紧张、锚定效应、启发式偏差</td></tr>
+    </table>
+  </div>
+
+  <!-- 概念2 -->
+  <div class="concept-card">
+    <div class="concept-name">② 锚定效应（Anchoring Effect）</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>人们在做出判断时，会受到最初获得信息（「锚」）的强烈影响，即使这个信息与判断无关</td></tr>
+      <tr><td>人话翻译</td><td><strong>第一印象就是一切</strong>。你先听到一个数字（哪怕是完全随机的），后续的所有估计都会不由自主地向这个数字靠拢</td></tr>
+      <tr><td>为什么重要</td><td>解释了谈判、定价、评估中的大量非理性行为。也是最容易利用也最难防御的偏差之一</td></tr>
+      <tr><td>生活实例</td><td>买房时中介先带你看一套超贵的「锚」房子，再看正常的房子就显得便宜；电商原价划掉写特价就是锚定</td></tr>
+      <tr><td>关联概念</td><td>框架效应、心理账户、调整不足（锚定的心理机制）</td></tr>
+    </table>
+  </div>
+
+  <!-- 概念3 -->
+  <div class="concept-card">
+    <div class="concept-name">③ 可得性启发式（Availability Heuristic）</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>人们根据记忆中相关信息提取的难易程度来判断事件的可能性或频率——越容易想起的事，越被认为更常见</td></tr>
+      <tr><td>人话翻译</td><td><strong>你能想到的事 ≠ 真正发生多的事</strong>。媒体轰炸让你觉得空难频发，但实际上开车危险得多。大脑用「检索流畅度」替代了「真实概率」</td></tr>
+      <tr><td>为什么重要</td><td>导致我们对风险的严重误判——高估戏剧性事件（恐怖袭击、空难），低估慢性杀手（吸烟、肥胖、糖）</td></tr>
+      <tr><td>生活实例</td><td>看完一部关于癌症的电影后突然特别担心健康；新闻里报道了几起校园霸凌后觉得孩子上学很危险</td></tr>
+      <tr><td>关联概念</td><td>代表性偏差、情绪启发式、媒体效应</td></tr>
+    </table>
+  </div>
+
+  <!-- 概念4 -->
+  <div class="concept-card">
+    <div class="concept-name">④ 代表性启发式（Representativeness Heuristic）& 基率忽视</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>人们倾向于根据A与B的相似程度来判断A属于B的概率，而忽略基率（基础概率）信息</td></tr>
+      <tr><td>人话翻译</td><td><strong>像就是等于是</strong>。一个人看起来像程序员，你就觉得他大概率是程序员，哪怕程序员的总体比例只有1%</td></tr>
+      <tr><td>为什么重要</td><td>最经典的认知偏差之一，直接催生了「行为经济学」。著名的「琳达问题」证明了连斯坦福大学的学生都会犯错</td></tr>
+      <tr><td>生活实例</td><td>面试时觉得某候选人「很有领导气质」就认为他适合管理岗，但忽略了80%的管理者都是从内部晋升的数据</td></tr>
+      <tr><td>关联概念</td><td>合取谬误（琳达问题）、回归平均值、贝叶斯推理</td></tr>
+    </table>
+  </div>
+
+  <!-- 概念5 -->
+  <div class="concept-card">
+    <div class="concept-name">⑤ 前景理论与损失厌恶（Prospect Theory & Loss Aversion）</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>前景理论：人们在做风险决策时，依据的是相对于参照点的收益/损失，而非最终财富状态。其中核心发现：损失的痛苦约为等量收益快乐的2-2.5倍</td></tr>
+      <tr><td>人话翻译</td><td><strong>亏100块的痛苦 ≈ 赚200块的快乐</strong>。所以为了避免损失，人会做出非理性选择——比如死扛亏损股票不肯割肉</td></tr>
+      <tr><td>为什么重要</td><td>卡尼曼最重要的学术贡献，诺贝尔奖级别的发现。彻底推翻了「期望效用理论」，重新定义了经济学对「理性」的理解</td></tr>
+      <tr><td>生活实例</td><td>投资者赚20%就赶紧落袋为安，亏20%却死扛不放；消费者为了省50元跑三趟超市，却对大额消费的50元差价无所谓</td></tr>
+      <tr><td>关联概念</td><td>参照点依赖、禀赋效应、框架效应、心理账户、Endowment Effect</td></tr>
+    </table>
+  </div>
+
+  <!-- 概念6 -->
+  <div class="concept-card">
+    <div class="concept-name">⑥ 框架效应（Framing Effect）</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>同一问题的不同表述方式（框架）会导致不同的决策结果。本质上是因为不同框架触发了不同的参照点和损失/收益感知</td></tr>
+      <tr><td>人话翻译</td><td><strong>怎么说比说什么更重要</strong>。「手术成功率90%」和「手术死亡率10%」描述的是同一件事，但前者让人想做手术，后者让人害怕</td></tr>
+      <tr><td>为什么重要</td><td>揭示了语言和呈现方式如何操纵决策。营销、政治、医疗沟通中无处不在</td></tr>
+      <tr><td>生活实例</td><td>牛肉标注「90%瘦肉」比「10%脂肪」卖得更好；政策说「保障就业」比「允许通胀」更容易获支持</td></tr>
+      <tr><td>关联概念</td><td>损失厌恶、参照点依赖、心理账户</td></tr>
+    </table>
+  </div>
+
+  <!-- 概念7 -->
+  <div class="concept-card">
+    <div class="concept-name">⑦ 过度自信（Overconfidence）& 规划谬误</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>人们普遍高估自己的知识、能力和预测的准确性。规划谬误是其具体表现：预测任务完成时间时系统性低估所需时间</td></tr>
+      <tr><td>人话翻译</td><td><strong>我们都觉得自己比一般人强</strong>（这本身就是一个统计学上的不可能）。项目永远延期、预算永远超支，根源就在这里</td></tr>
+      <tr><td>为什么重要</td><td>过度自信是「最顽固的认知偏差」，连知道这个偏差的人也无法免疫。它导致了商业失败、政策失误、金融灾难</td></tr>
+      <tr><td>生活实例</td><td>「我这次一定早睡」「这个项目两周做完」「我考研肯定没问题」——然后现实狠狠打脸</td></tr>
+      <tr><td>关联概念</td><td>后见之明（Hindsight Bias）、叙事谬误、WYSIATI（所见即为全部）</td></tr>
+    </table>
+  </div>
+
+  <!-- 概念8 -->
+  <div class="concept-card">
+    <div class="concept-name">⑧ 体验自我 vs 记忆自我（Experiencing Self vs Remembering Self）</div>
+    <table class="concept-table">
+      <tr><td>书中定义</td><td>体验自我：活在当下，每一刻的真实感受。记忆自我：事后对经历的回顾和评价，遵循「峰终定律」（Peak-End Rule）——记忆由最强烈的时刻和最后的时刻决定</td></tr>
+      <tr><td>人话翻译</td><td><strong>你的人生有两个「你」在同时投票</strong>。当下的你在忍受痛苦，但未来的你只会记住「最痛的那一刻」和「最后的感觉」。这两个自我经常冲突</td></tr>
+      <tr><td>为什么重要</td><td>解释了很多反直觉的选择：为什么人愿意重复经历「当时很痛苦但回忆美好」的事情（如生孩子、登山）；医疗决策应该如何平衡减轻痛苦 vs 改善记忆</td></tr>
+      <tr><td>生活实例</td><td>一场音乐会中间有段无聊但你记得高潮很棒 → 你会说「太棒了」；另一场全程不错但没有高潮 → 你会觉得「一般般」</td></tr>
+      <tr><td>关联概念</td><td>峰终定律、持续时间忽略、效用最大化困境</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ===== Knowledge Map ===== -->
+<section class="section" id="knowledge">
+  <h2 class="section-title"><span class="emoji">🔗</span> 知识图谱</h2>
+
+  <h3>本书内部的概念关系</h3>
+  <div class="tree-box">                ┌───────────────────────────────────┐
+                │         双系统理论 (System 1/2)       │ ← 全书基石
+                │         「谁在做决策？」              │
+                └──────────────┬────────────────────────┘
+                               │ 系统1的运作方式
+                               ▼
+                ┌───────────────────────────────────┐
+                │         启发式与偏差               │ ← 系统1如何走捷径？
+                │  (锚定 / 可得性 / 代表性 / 因果)   │
+                └──────────────┬────────────────────────┘
+                               │ 偏差导致的非理性选择
+                               ▼
+                ┌───────────────────────────────────┐
+                │       前景理论 (Prospect Theory)   │ ← 经济学革命
+                │  (损失厌恶 / 参照点 / 价值函数)    │
+                └──────────────┬────────────────────────┘
+                               │ 在实际场景中的表现
+                               ▼
+                ┌───────────────────────────────────┐
+                │       框架效应与心理账户           │ ← 同一钱的不同价值
+                │  (禀赋效应 / 心理账户 / 沉没成本)  │
+                └──────────────┬────────────────────────┘
+                               │ 对自身能力的误判
+                               ▼
+                ┌───────────────────────────────────┐
+                │       过度自信与专家直觉           │ ← 我们没自己想的那么行
+                │  (规划谬误 / 后见之明 / WYSIATI)   │
+                └──────────────┬────────────────────────┘
+                               │ 最终：谁来评价这段经历？
+                               ▼
+                ┌───────────────────────────────────┐
+                │     两个自我 (Two Selves)          │ ← 体验者 vs 回忆者
+                │  (峰终定律 / 效用最大化困境)       │
+                └───────────────────────────────────┘
+
+核心张力：
+  • 系统1（快/自动）vs 系统2（慢/费力）— 资源竞争
+  • 经济理性 vs 行为现实 — 应然 vs 实然
+  • 体验自我 vs 记忆自我 — 当下幸福 vs 回忆评价</div>
+
+  <h3>与其他书的对话</h3>
+  <table class="book-table">
+    <tr><th>本书观点</th><th>对话对象</th><th>共同点</th><th>分歧/补充</th></tr>
+    <tr><td>双系统理论</td><td>《思考快与慢》原著</td><td>同源</td><td>本书是中文解读版的核心精华</td></tr>
+    <tr><td>损失厌恶 / 前景理论</td><td>《怪诞行为学》丹·艾瑞里</td><td>都揭示非理性决策模式</td><td>艾瑞里更偏实验趣味性，卡尼曼更偏理论基础</td></tr>
+    <tr><td>锚定效应 / 框架效应</td><td>《影响力》西奥迪尼</td><td>都研究说服与决策操控</td><td>西奥迪尼从社会心理学角度，卡尼曼从认知机制角度</td></tr>
+    <tr><td>过度自信</td><td>《黑天鹅》塔勒布</td><td>都强调人类预测能力的局限</td><td>塔勒布更激进——他认为模型本身就有缺陷，不只是参数偏差</td></tr>
+    <tr><td>两个自我</td><td>《幸福假说》海特</td><td>都探讨「什么是真正的好生活」</td><td>海特整合了哲学/进化视角，卡尼曼聚焦于实证测量</td></tr>
+    <tr><td>专家直觉的局限</td><td>《噪声》卡尼曼新作</td><td>同一作者的延续思考</td><td>《噪声》聚焦于判断中的随机变异，是《思考快与慢》的自然延伸</td></tr>
+  </table>
+</section>
+
+<!-- ===== Insights ===== -->
+<section class="section" id="insights">
+  <h2 class="section-title"><span class="emoji">⚡</span> 核心洞察</h2>
+
+  <div class="insight-card">
+    <div class="insight-title"><span class="insight-num">1</span>你的「直觉」不是天赋，是系统1的自动输出——而且经常出错</div>
+    <div class="insight-item"><span class="insight-label">是什么：</span>直觉本质上是系统1基于模式匹配的快速输出。它在某些高频反馈环境（如下棋、看X光片、消防员判断火场）中确实有效，但在低频、低反馈、高不确定性的环境中（如投资、招聘、战略决策），直觉的准确率并不比抛硬币好多少</div>
+    <div class="insight-item"><span class="insight-label">为什么震撼：</span>我们从小被教育要「相信直觉」，成功人士也爱说「我的直觉告诉我……」。但数据显示，专家直觉的可信度高度依赖于领域特征——只有<strong>规律性强 + 反馈即时</strong>的环境才值得信任直觉</div>
+    <div class="insight-item"><span class="insight-label">怎么用：</span>在做重要决策前问自己三个问题：（1）这个领域是否有足够稳定的规律？（2）我能得到快速准确的反馈吗？（3）我有足够的练习量吗？如果任何一个答案是否定的，就不要相信直觉，改用结构化决策方法（如检查清单、加权打分表）</div>
+    <div class="insight-item"><span class="insight-label">风险提示：</span>不要走向另一个极端——完全否定直觉的价值。在日常琐事和紧急情况下，系统1的反应速度是系统2无法比拟的。关键是学会区分「什么时候该听直觉」</div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-title"><span class="insight-num">2</span>损失厌恶让你在错误的道路上越走越远</div>
+    <div class="insight-item"><span class="insight-label">是什么：</span>由于损失的心理权重约为收益的2-2.5倍，人们会系统性地做出「避免损失」的非理性选择：死扛亏损股票、不愿承认错误决策、拒绝止损、沉没成本谬误</div>
+    <div class="insight-item"><span class="insight-label">为什么震撼：</span>这个简单的系数差异解释了大量看似矛盾的经济行为：为什么股市中散户亏多赚少（赚一点就跑，亏了死扛）；为什么企业宁愿继续投资烂项目也不愿承认失败；为什么谈判中「让步」比「不给」更难受</div>
+    <div class="insight-item"><span class="insight-label">怎么用：</span>建立「预承诺机制」——在情绪介入之前就设定好止损规则。比如投资前写下「跌到什么价位必须卖」，并让别人监督执行。在做重大决策时，尝试<strong>重新框架</strong>：把「放弃X」描述为「获得Y的机会」</div>
+    <div class="insight-item"><span class="insight-label">风险提示：</span>损失厌恶并非总是坏事——它让我们规避高风险行为，在进化上有生存价值。关键是在需要冒险创新的场景中有意识地克服它</div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-title"><span class="insight-num">3</span>你所「看到」的信息，只是冰山一角——WYSIATI</div>
+    <div class="insight-item"><span class="insight-label">是什么：</span>卡尼曼提出的一个缩写：<strong>What You See Is All There Is</strong>（所见即为全部）。系统1在构建连贯故事时，只会使用手头已有的信息，而不会主动搜索缺失的信息。结果是：你对任何问题的判断都比你以为的更加片面</div>
+    <div class="insight-item"><span class="insight-label">为什么震撼：</span>这意味着即使你非常努力地「客观分析」，只要你的信息来源有限，结论就会不可避免地偏向已有信息。这不是态度问题，是认知架构的限制</div>
+    <div class="insight-item"><span class="insight-label">怎么用：</span>养成「反向思考」的习惯：在得出任何结论后，强制自己列出（1）我不知道什么？（2）如果反面是真的，我应该看到哪些证据？（3）我的信息来源有什么偏见？这就是查理·芒格说的「反过来想，总是反过来想」</div>
+    <div class="insight-item"><span class="insight-label">风险提示：</span>过度追求「完整信息」会导致分析瘫痪（Analysis Paralysis）。关键是在重要决策上投入更多精力收集反面证据，而不是所有决策都要穷尽信息</div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-title"><span class="insight-num">4</span>框架决定了结论——改变提问方式就能改变答案</div>
+    <div class="insight-item"><span class="insight-label">是什么：</span>同一个事实，用不同的方式表述（框架），会触发不同的心理参照点，从而产生完全不同的决策。这不是「文字游戏」，而是大脑处理信息的深层机制</div>
+    <div class="insight-item"><span class="insight-label">为什么震撼：</span>我们总以为自己是在「客观评估选项」，但实际上我们对选项的理解已经被呈现方式暗中操纵了。这意味着：谁能控制框架，谁就能在很大程度上控制结果</div>
+    <div class="insight-item"><span class="insight-label">怎么用：</span>（1）接收信息时自觉识别框架——这句话换个说法会怎样？（2）做决策时尝试多个框架——分别从「收益框架」和「损失框架」审视同一个选择；（3）沟通时有意识地使用正向框架——如果你想说服别人，强调「做了的好处」比「不做的坏处」更有效</div>
+    <div class="insight-item"><span class="insight-label">风险提示：</span>框架效应的存在并不意味着「没有客观真相」。而是说，通往真相的路上布满了框架陷阱，需要额外的认知努力来穿越</div>
+  </div>
+
+  <div class="insight-card">
+    <div class="insight-title"><span class="insight-num">5</span>你的「记忆」在欺骗你——峰终定律重塑人生体验</div>
+    <div class="insight-item"><span class="insight-label">是什么：</span>记忆自我不记录体验的总时长或平均强度，只关注两个点：<strong>峰值（最强烈的时刻）+ 终值（最后的时刻）</strong>。一段10分钟的轻度疼痛 + 最后1秒的剧烈疼痛，比一段11分钟的均匀中度疼痛，记忆中更痛苦</div>
+    <div class="insight-item"><span class="insight-label">为什么震撼：</span>这意味着我们在「回顾人生」时的评价体系与「活在当时」的感受体系是脱节的。你可能选择重复一次「当时很苦但结尾很好」的经历，而拒绝一次「整体舒适但结尾糟糕」的经历——即使前者的总痛苦更大</div>
+    <div class="insight-item"><span class="insight-label">怎么用：</span>（1）设计体验时重视「收尾」——会议结束时留一个好消息，约会结束时制造一个小惊喜；（2）医疗决策中意识到这一点——延长无痛恢复期可能比缩短治疗过程更能改善患者的整体记忆；（3）反思自己的人生选择时问：我是被记忆自我绑架了吗？当下的幸福感和回忆的评价哪个更重要？</div>
+    <div class="insight-item"><span class="insight-label">风险提示：</span>峰终定律在短时、明确的体验中最有效。对于长期、模糊的人生阶段（如「我的职业生涯」），记忆的形成机制更复杂</div>
+  </div>
+</section>
+
+<!-- ===== Critical Thinking ===== -->
+<section class="section" id="critical">
+  <h2 class="section-title"><span class="emoji">❓</span> 批判性思考</h2>
+
+  <h3>✅ 我认同的部分</h3>
+  <div class="critique-ok">
+    <p><strong>1. 实验方法的严谨性无可挑剔：</strong>卡尼曼和特沃斯基的研究不是哲学思辨，而是大量可重复、可证伪的行为实验。每一个偏差都有具体的实验设计、对照组、统计显著性。这种标准在心理学领域是标杆级的</p>
+  </div>
+  <div class="critique-ok">
+    <p><strong>2. 双系统模型的解释力极强：</strong>虽然「系统1/系统2」是简化模型，但它成功地统一了解释了大量看似独立的认知现象。一个好的科学理论不在于「完全正确」，而在于「有用且可证伪」</p>
+  </div>
+  <div class="critique-ok">
+    <p><strong>3. 对「理性人假设」的颠覆具有革命性意义：</strong>主流经济学建立在理性人假设之上，而卡尼曼证明这个假设在绝大多数情况下不成立。这推动了整个行为经济学和 behavioral finance 的兴起</p>
+  </div>
+
+  <h3>🟡 我存疑的部分</h3>
+  <div class="critique-doubt">
+    <p><strong>1. 双系统理论可能过于简化：</strong>现代认知神经科学表明，大脑的运作远比「两个系统」复杂。实际上存在多个并行处理的神经网络，「二分法」更像是一个有用的教学隐喻而非精确的神经解剖学描述</p>
+  </div>
+  <div class="critique-doubt">
+    <p><strong>2. 实验环境的生态效度问题：</strong>很多经典实验（如琳达问题）使用的是大学生样本和人工情境。这些发现在真实的复杂决策环境中（如CEO的战略决策、投资者的市场操作）适用性如何？外推需要谨慎</p>
+  </div>
+  <div class="critique-doubt">
+    <p><strong>3. 「偏差」的定义隐含了规范性立场：</strong>称某种思维模式为「偏差」，意味着存在一个「正确」的标准答案（通常是逻辑或统计学意义上的）。但在真实世界中，很多「非理性」行为可能有进化适应性或社会功能</p>
+  </div>
+
+  <h3>🔴 这本书的盲区</h3>
+  <div class="critique-blind">
+    <p><strong>1. 文化差异讨论不足：</strong>几乎所有实验对象都是西方（尤其是美国）受教育群体。东亚集体主义文化、高权力距离社会的认知模式是否相同？韦伯式的「理性」是否是普适标准？书中几乎没有涉及</p>
+  </div>
+  <div class="critique-blind">
+    <p><strong>2. 缺乏对「如何有效去偏差」的系统方案：</strong>书花了绝大部分篇幅揭示偏差，但对「如何在实际生活中纠正这些偏差」着墨相对较少。知道了偏差≠能克服偏差——甚至可能产生「偏差偏执」</p>
+  </div>
+  <div class="critique-blind">
+    <p><strong>3. 对情绪和动机的作用讨论有限：</strong>书主要关注认知过程（信息处理），但情绪状态、动机强度、社会压力等因素对决策的影响同样巨大。纯粹的认知视角是不完整的</p>
+  </div>
+  <div class="critique-blind">
+    <p><strong>4. 忽略了AI时代的新变量：</strong>书出版于2011年，当时还没有ChatGPT、推荐算法、社交媒体信息茧房。今天的「系统1」不仅被生物本能劫持，还被算法精心设计的注意力捕获机制放大。认知偏差在数字时代有了新的表现形式</p>
+  </div>
+</section>
+
+<!-- ===== Action Items ===== -->
+<section class="section" id="action">
+  <h2 class="section-title"><span class="emoji">🎯</span> 行动清单</h2>
+
+  <h3>本周内可以做的</h3>
+  <ul class="checklist">
+    <li><strong>做一个「决策审计」：</strong>回顾过去一个月你做的3个重要决策，识别每个决策中可能涉及的认知偏差（锚定？损失厌恶？可得性？过度自信？）</li>
+    <li><strong>建立「事前验尸」习惯：</strong>在做重大决定前，先假设这个决定已经失败了，然后倒推「可能的失败原因是什么」。这能有效对抗过度自信和WYSIATI</li>
+    <li><strong>设计一个「检查清单」：</strong>针对你工作中最常见的决策类型（招人、投资、项目管理），创建一个包含关键检查点的清单，强制系统2参与</li>
+  </ul>
+
+  <h3>持续实践的习惯</h3>
+  <ul class="checklist">
+    <li><strong>「暂停10秒」原则：</strong>在任何情绪激动的决策场景（愤怒回复邮件、冲动购物、市场恐慌时卖股票）中，强迫自己等待至少10秒再行动。这给了系统2启动的最小窗口</li>
+    <li><strong>外部视角法（Outside View）：</strong>每当你要估计「这件事要多久/多少钱/成功率多高」时，先找同类案例的基准数据（基率），而不是从零开始做「内部视角」的乐观预测</li>
+    <li><strong>反向框架练习：</strong>每周选一个你已经形成的观点，尝试用完全相反的方式重新表述它，看看是否会改变你的判断</li>
+    <li><strong>记决策日记：</strong>记录你的重要决策、当时的理由、预期的结果。半年后回看，对比预期与现实的差距，训练你的校准能力</li>
+  </ul>
+
+  <h3>深入延伸</h3>
+  <ul class="checklist">
+    <li><strong>必读续作：</strong>《噪声》（Noise: A Flaw in Human Judgment）—— 卡尼曼2021年新作，聚焦判断中的随机变异，是《思考快与慢》的自然延伸</li>
+    <li><strong>交叉阅读：</strong>《怪诞行为学》（丹·艾瑞里）、《影响力》（西奥迪尼）、《黑天鹅》（塔勒布）、《助推》（塞勒/桑斯坦）</li>
+    <li><strong>实践工具：</strong>学习使用「决策矩阵」「加权打分表」「预承诺协议」等结构化决策工具；了解「贝叶斯更新」的基本思维方式</li>
+    <li><strong>进阶方向：</strong>如果对学术源头感兴趣，可以读卡尼曼与特沃斯基的经典论文集《Choices, Values, and Frames》；如果想了解神经科学基础，可以看《思考，快与慢》之后兴起的「双重加工理论」（Dual Process Theory）文献</li>
+  </ul>
+</section>
+
+<!-- ===== Personal Notes ===== -->
+<section class="section">
+  <h2 class="section-title"><span class="emoji">📝</span> 个人笔记同步</h2>
+  <p style="color:var(--sub); text-align:center; padding: 20px 0;">暂无个人笔记/划线。当你开始在微信读书中阅读这本书并做标注后，这里会自动同步你的想法。</p>
+</section>
+
+<div class="footer">
+  <p>📖 微信读书每日学习计划 · 第 2 天</p>
+  <p>生成于 2026-07-29 · 数据来源：微信读书书籍详情 + 公开书评</p>
+</div>
+
+</div>
+
+<script>
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc a').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Highlight active section on scroll
+const sections = document.querySelectorAll('section[id]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 80;
+    if (scrollY >= top) current = s.getAttribute('id');
+  });
+  document.querySelectorAll('.toc a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+</script>
+
+</body>
+</html>
