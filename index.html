@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 微信读书每日学习笔记</title>
+<style>
+  :root {
+    --bg: #f5f7fa; --card: #ffffff; --text: #1a1a2e;
+    --accent: #2563eb; --accent-light: #eff6ff; --border: #e5e7eb;
+    --sub: #6b7280; --shadow: 0 2px 8px rgba(0,0,0,.06);
+    --radius: 16px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+
+  .header { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); color: white; padding: 48px 20px 40px; text-align: center; }
+  .header-icon { font-size: 48px; margin-bottom: 12px; }
+  .header h1 { font-size: 28px; font-weight: 800; letter-spacing: -.5px; }
+  .header p { font-size: 15px; opacity: .85; margin-top: 10px; }
+
+  .stats { display: flex; justify-content: center; gap: 24px; margin-top: 24px; flex-wrap: wrap; }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 32px; font-weight: 800; display: block; }
+  .stat-label { font-size: 13px; opacity: .75; }
+
+  .container { max-width: 800px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  .section-title { font-size: 20px; font-weight: 800; margin: 32px 0 20px; color: var(--text); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+  .note-card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); text-decoration: none; color: inherit; transition: transform .2s, box-shadow .2s; display: block; }
+  .note-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,.1); }
+  .note-date { font-size: 13px; color: var(--sub); margin-bottom: 8px; }
+  .note-title { font-size: 18px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
+  .note-meta { font-size: 14px; color: var(--sub); }
+  .note-tag { display: inline-block; background: var(--accent-light); color: var(--accent); padding: 2px 10px; border-radius: 12px; font-size: 12px; margin-right: 6px; margin-top: 8px; }
+
+  .footer { text-align: center; padding: 32px; color: var(--sub); font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px; }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 480px) {
+    .header h1 { font-size: 24px; }
+    .stats { gap: 16px; }
+    .stat-num { font-size: 26px; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">📚</div>
+  <h1>微信读书 · 每日学习笔记</h1>
+  <p>清华理工科风格的深度学习笔记，每天一本书，真正理解核心思想体系</p>
+  <div class="stats">
+    <div class="stat-item">
+      <span class="stat-num">1</span>
+      <span class="stat-label">篇笔记</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">1</span>
+      <span class="stat-label">天连续</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">7.53</span>
+      <span class="stat-label">平均评分</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<h2 class="section-title">📖 笔记列表</h2>
+<div class="grid">
+
+<a class="note-card" href="2026-08-27-%E5%80%A6%E6%80%A0%E7%A4%BE%E4%BC%9A.html">
+  <div class="note-date">2026-08-27 · 第 1 天</div>
+  <div class="note-title">《倦怠社会》</div>
+  <div class="note-meta">
+    [韩] 韩炳哲
+    <span class="note-tag">社会文化·社科</span>
+    <span class="note-tag">⭐ 7.53分</span>
+  </div>
+</a>
+
+</div>
+
+<div class="footer">
+  <p>🔧 Powered by WorkBuddy Automation · <a href="https://github.com/phonghong13/weread-notes">GitHub</a></p>
+  <p>数据来源：微信读书 API · 生成时间：2026-08-27</p>
+</div>
+
+</div>
+
+</body>
+</html>
